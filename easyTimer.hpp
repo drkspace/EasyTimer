@@ -11,14 +11,6 @@ private:
   std::chrono::time_point<Clock> start{};
   std::string prefix;
 
-public:
-  easyTimer() : start(Clock::now()), prefix("Time Elapsed: ") {}
-  easyTimer(std::string prefix) : start(Clock::now()), prefix(prefix) {}
-  ~easyTimer() {
-    const std::chrono::duration<double> elapsed(Clock::now() - start);
-    std::cout << prefix << std::chrono::duration_cast<Unit>(elapsed).count()
-              << deduceUnit() << std::endl;
-  }
   const char *deduceUnit() {
 #if __cplusplus >= 201703L
     if constexpr
@@ -51,6 +43,15 @@ public:
       return "";
     }
 #endif
+  }
+
+public:
+  easyTimer() : start(Clock::now()), prefix("Time Elapsed: ") {}
+  easyTimer(std::string prefix) : start(Clock::now()), prefix(prefix) {}
+  ~easyTimer() {
+    const std::chrono::duration<double> elapsed(Clock::now() - start);
+    std::cout << prefix << std::chrono::duration_cast<Unit>(elapsed).count()
+              << deduceUnit() << std::endl;
   }
 };
 
