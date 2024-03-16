@@ -4,17 +4,17 @@
 #include <chrono>
 #include <iostream>
 
-template <class Unit = std::chrono::seconds,
-          class Clock = std::chrono::high_resolution_clock>
+template <typename Unit = std::chrono::seconds,
+          typename Clock = std::chrono::high_resolution_clock>
 class easyTimer {
 private:
   std::chrono::time_point<Clock> start{};
-  std::string prefix;
+  std::string prefix, suffix;
 
   const char *deduceUnit() {
-#if __cplusplus >= 201703L
+#if __cplusplus >= 201703L // c++17
     if constexpr
-#else
+#else // c++11 (doesn't have "if constexpr")
     if
 #endif
         (std::is_same<Unit, std::chrono::nanoseconds>::value) {
@@ -28,7 +28,7 @@ private:
     } else if (std::is_same<Unit, std::chrono::hours>::value) {
       return "h";
     }
-#if __cplusplus >= 202002L
+#if __cplusplus >= 202002L // c++20
     else if (std::is_same<Unit, std::chrono::days>::value) {
       return "d";
     } else if (std::is_same<Unit, std::chrono::weeks>::value) {
@@ -38,7 +38,7 @@ private:
     } else if (std::is_same<Unit, std::chrono::years>::value) {
       return "y";
     }
-#else
+#else // The other units didn't exist until c++20
     else {
       return "";
     }
@@ -48,10 +48,10 @@ private:
 public:
   easyTimer() : start(Clock::now()), prefix("Time Elapsed: ") {}
   easyTimer(std::string prefix) : start(Clock::now()), prefix(prefix) {}
+  easyTimer(std::string prefix, std::string suffix) : start(Clock::now()), prefix(prefix), suffix(suffix) {}
   ~easyTimer() {
-    const std::chrono::duration<double> elapsed(Clock::now() - start);
-    std::cout << prefix << std::chrono::duration_cast<Unit>(elapsed).count()
-              << deduceUnit() << std::endl;
+    std::cout << prefix << std::chrono::duration<double, typename Unit::period>(Clock::now() - start).count()
+              << deduceUnit() << suffix <<std::endl;
   }
 };
 
