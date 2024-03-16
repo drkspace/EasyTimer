@@ -1,3 +1,8 @@
+/**
+ * (c) 2024 Daniel Kramer
+ * An easy c++ timer. Only this header file is needed. Refer to the README or
+ * https://github.com/drkspace/EasyTimer for information.
+ */
 #ifndef _EASY_TIMER_HPP
 #define _EASY_TIMER_HPP
 
@@ -18,26 +23,26 @@
  * default chrono duration is used (i.e. std::chrono::second), then the unit
  * will be automatically detected. If a custom one is used, then include in the
  * suffix argument.
- * @tparam Clock The type of clock to use. 
+ * @tparam Clock The type of clock to use.
  */
 template <typename Unit = std::chrono::seconds,
           typename Clock = std::chrono::high_resolution_clock>
 class easyTimer {
 private:
-
   // The start time
   std::chrono::time_point<Clock> start{};
 
-  // The prefix/suffix to print with the elapsed time. 
+  // The prefix/suffix to print with the elapsed time.
   std::string prefix, suffix;
 
   /**
    * Deduces the unit abbreviation if a chrono unit is used.
-   * 
-   * If the unit is custom, then it is recommended to include a unit in the suffix. 
-   * 
+   *
+   * If the unit is custom, then it is recommended to include a unit in the
+   * suffix.
+   *
    * @returns The unit abbreviation if it is known.
-  */
+   */
   const char *deduceUnit() {
 #if __cplusplus >= 201703L // c++17
     if constexpr
@@ -73,26 +78,26 @@ private:
   }
 
 public:
-
   /**
    * The default constructor. Will initialize the prefix to "Time Elapsed: "
-  */
+   */
   easyTimer() : start(Clock::now()), prefix("Time Elapsed: ") {}
 
   /**
    * A constructor for a custom prefix.
-  */
+   */
   easyTimer(std::string prefix) : start(Clock::now()), prefix(prefix) {}
 
   /**
    * A constructor for a custom prefix and suffix.
-  */
+   */
   easyTimer(std::string prefix, std::string suffix)
       : start(Clock::now()), prefix(prefix), suffix(suffix) {}
 
   /**
-   * The destructor. Will print out the elapsed time when the object goes out of scope.
-  */
+   * The destructor. Will print out the elapsed time when the object goes out of
+   * scope.
+   */
   ~easyTimer() {
     std::cout << prefix
               << std::chrono::duration<double, typename Unit::period>(
